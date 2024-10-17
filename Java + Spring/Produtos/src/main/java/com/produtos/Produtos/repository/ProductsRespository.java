@@ -10,8 +10,11 @@ import java.util.Optional;
 @Repository
 public interface ProductsRespository extends JpaRepository<Products, Long> {
     // aparecer menores preços e maiores preços
-    List<Products> findByMaxPrice(Double price);
-    List<Products> findByMinPrice(Double price);
+    List<Products> findByProductName(String productName);
 
-    String findByName(String name);
+    // Preços menores ou iguais
+    List<Products> findByPriceProductLessThanEqual(Double priceProduct);
+
+    // Preços maiores ou iguais
+    List<Products> findByPriceProductGreaterThanEqual(Double priceProduct);
 }

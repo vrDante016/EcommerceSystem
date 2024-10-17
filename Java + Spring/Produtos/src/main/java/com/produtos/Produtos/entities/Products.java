@@ -19,11 +19,12 @@ public class Products {
 
     public Products(){}
 
-    public Products(Long id, String productName, Double priceProduct) {
-        this.id = id;
+    public Products( String productName, Double priceProduct) {
+
         this.productName = productName;
         this.priceProduct = priceProduct;
     }
+
 
     public Long getId() {
         return id;

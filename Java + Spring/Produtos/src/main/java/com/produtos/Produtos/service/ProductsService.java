@@ -1,10 +1,10 @@
 package com.produtos.Produtos.service;
 
 import com.produtos.Produtos.entities.Products;
-import com.produtos.Produtos.exceptions.PriceNotValidException;
-import com.produtos.Produtos.exceptions.ProductNofFoundException;
+import com.produtos.Produtos.exceptions.ProductNotFoundException;
 import com.produtos.Produtos.productsDTO.ProductsDTO;
 import com.produtos.Produtos.repository.ProductsRespository;
+import com.produtos.Produtos.service.utils.ProductsUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,86 +19,65 @@ public class ProductsService {
     @Autowired
     private ProductsRespository productsRespository;
 
+    private final ProductsUtil productsUtil = new ProductsUtil();
+
     private final ModelMapper modelMapper = new ModelMapper();
 
 
     //utilizando stream api para deixar o programa mais limpo e facil de entender
     public List<ProductsDTO> findAll(){
-        return productsRespository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+        return productsRespository.findAll().stream().map(productsUtil::convertToDto).collect(Collectors.toList());
     }
 
     //buscar por id
     public Optional<ProductsDTO> findById(Long id) {
 
-        return Optional.ofNullable(productsRespository.findById(id).map(this::convertToDto).orElseThrow(() -> new ProductNofFoundException("Produto não encontrado" + id)));
+        return Optional.ofNullable(productsRespository.findById(id).map(productsUtil::convertToDto).orElseThrow(() -> new ProductNotFoundException("Produto não encontrado" + id)));
     }
     //adicionar novo produto
     public ProductsDTO addProduct(ProductsDTO productsDTO){
-        Products products = modelMapper.map(productsDTO, Products.class);
+        Products products = productsUtil.convertProducts(productsDTO);
         productsRespository.save(products);
-        return convertToDto(products);
+        return productsUtil.convertToDto(products);
 
     }
 
     //atualizar produtos
     public ProductsDTO updateProducts(Long id, ProductsDTO productsDTO){
-        Products products = productsRespository.findById(id).orElseThrow(() -> new ProductNofFoundException("Produto não encontrado"));
+        Products products = productsRespository.findById(id).orElseThrow(() -> new ProductNotFoundException("Produto não encontrado"));
 
         modelMapper.map(productsDTO, products);
         productsRespository.save(products);
-
-        return convertToDto(products);
+        return productsUtil.convertToDto(products);
     }
     public void deleteProduct(Long id){
+        if(!productsRespository.existsById(id)){
+            throw new ProductNotFoundException("Produto não encontrado");
+        }
         productsRespository.deleteById(id);
     }
 
-    public ProductsDTO findByName(String name){
-
+    public List<ProductsDTO>findByName(String name){
+        return productsRespository.findByProductName(name).stream().map(productsUtil::convertToDto).collect(Collectors.toList());
     }
 
 
     //procurar por menor preço
-    public List<ProductsDTO> findMinPrice(Double price)  {
-        priceNotNUll(price);
-        List<Products> products = productsRespository.findByMinPrice(price);
-        productExistList(products);
-        return products.stream().map(this::convertToDto).collect(Collectors.toList());
+    public List<ProductsDTO> findByMinPrice(Double price)  {
+        productsUtil.validatePrice(price);
+        List<Products> products = productsRespository.findByPriceProductLessThanEqual(price);
+        productsUtil.productExistList(products);
+        return products.stream().map(productsUtil::convertToDto).collect(Collectors.toList());
     }
 
     //procurar pelo maior preço
-    public List<ProductsDTO> findMaxPrice(Double price)  {
-        priceNotNUll(price);
-        List<Products> products = productsRespository.findByMaxPrice(price);
-        productExistList(products);
-        return products.stream().map(this::convertToDto).collect(Collectors.toList());
+    public List<ProductsDTO> findByMaxPrice(Double price)  {
+        productsUtil.validatePrice(price);
+        List<Products> products = productsRespository.findByPriceProductGreaterThanEqual(price);
+        productsUtil.productExistList(products);
+        return products.stream().map(productsUtil::convertToDto).collect(Collectors.toList());
     }
 
-
-    //funções para deixar o programa mais limpo e claro
-
-    //verifica se o produto existe
-    public static void productExistList(List<Products> products) {
-        if(products.isEmpty()){
-            throw new ProductNofFoundException("Produtos não existe");
-        }
-    }
-    public static void productExist(Products products){
-        if(products == null){
-            throw  new ProductNofFoundException("Produtos não existe");
-        }
-    }
-    //converte o produto para produto dto, fazendo assim o controller não ter acesso a entidade principal Produto
-    private ProductsDTO convertToDto(Products products){
-        return modelMapper.map(products, ProductsDTO.class);
-    }
-
-    //verifica se o preço é nulo ou menor que zero, se for ele lança uma exceção
-    public static void priceNotNUll(Double price){
-        if(price == null || price < 0){
-            throw new PriceNotValidException("O preço do produto não pode ser null nem menor que zero");
-        }
-    }
 
 
 
