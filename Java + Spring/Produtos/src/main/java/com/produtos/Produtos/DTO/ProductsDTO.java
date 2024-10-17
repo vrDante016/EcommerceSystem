@@ -1,35 +1,32 @@
-package com.produtos.Produtos.entities;
+package com.produtos.Produtos.DTO;
 
 
 import jakarta.persistence.*;
 
 import java.util.Objects;
 
-@Entity
-@Table(name = "products")
-public class Products {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductsDTO {
+
+
     private Long id;
-    @Column(name = "productName", nullable = false, length = 70)
+
     private String productName;
-    @Column(name = "priceProduct", nullable = false, length = 23)
+
     private Double priceProduct;
-    @Column(name = "description", nullable = true, length = 100)
+
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private Long categoryId;
 
-    public Products(){}
+    public ProductsDTO(){}
 
-    public Products(String productName, Double priceProduct, String description, Category category) {
+    public ProductsDTO(Long id, String productName, Double priceProduct, String description, Long categoryId) {
+        this.id = id;
         this.productName = productName;
         this.priceProduct = priceProduct;
         this.description = description;
-        this.category = category;
+        this.categoryId = categoryId;
     }
 
     public Long getId() {
@@ -62,19 +59,6 @@ public class Products {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Products products = (Products) o;
-        return Objects.equals(id, products.id) && Objects.equals(productName, products.productName) && Objects.equals(priceProduct, products.priceProduct);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productName, priceProduct);
     }
 
     @Override

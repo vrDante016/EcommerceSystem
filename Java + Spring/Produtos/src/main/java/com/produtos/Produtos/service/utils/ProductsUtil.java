@@ -3,14 +3,14 @@ package com.produtos.Produtos.service.utils;
 import com.produtos.Produtos.entities.Products;
 import com.produtos.Produtos.exceptions.PriceNotValidException;
 import com.produtos.Produtos.exceptions.ProductNotFoundException;
-import com.produtos.Produtos.productsDTO.ProductsDTO;
+import com.produtos.Produtos.DTO.ProductsDTO;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
 public class ProductsUtil {
 
-    private final ModelMapper modelMapper = new ModelMapper();
+
 
     //verifica se o produto existe
     public static void productExistList(List<Products> products) {
@@ -23,15 +23,6 @@ public class ProductsUtil {
             throw  new ProductNotFoundException("Produtos não existe");
         }
     }
-    //converte o produto para produto dto, fazendo assim o controller não ter acesso a entidade principal Produto
-    public ProductsDTO convertToDto(Products products){
-        return modelMapper.map(products, ProductsDTO.class);
-    }
-
-    public Products convertProducts(ProductsDTO productsDTO){
-        return modelMapper.map(productsDTO, Products.class);
-    }
-
 
     //verifica se o preço é nulo ou menor que zero, se for ele lança uma exceção
     public static void validatePrice(Double price){

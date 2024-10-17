@@ -1,5 +1,6 @@
 package com.produtos.Produtos.repository;
 
+import com.produtos.Produtos.entities.Category;
 import com.produtos.Produtos.entities.Products;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,6 @@ public interface ProductsRespository extends JpaRepository<Products, Long> {
 
     // Preços maiores ou iguais
     List<Products> findByPriceProductGreaterThanEqual(Double priceProduct);
+
+    List<Products> findByCategory(Category category);
 }

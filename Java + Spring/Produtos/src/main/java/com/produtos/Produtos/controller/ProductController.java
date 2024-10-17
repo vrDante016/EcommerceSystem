@@ -2,7 +2,7 @@ package com.produtos.Produtos.controller;
 
 import com.produtos.Produtos.exceptions.PriceNotValidException;
 import com.produtos.Produtos.exceptions.ProductNotFoundException;
-import com.produtos.Produtos.productsDTO.ProductsDTO;
+import com.produtos.Produtos.DTO.ProductsDTO;
 import com.produtos.Produtos.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class ProductController {
     @GetMapping("/price/{price}")
     public ResponseEntity<List<ProductsDTO>> getProductsByMinPrice(@PathVariable("price") Double price) {
         try{
-            List<ProductsDTO> products = productsService.findByMinPrice(price);
+            List<ProductsDTO> products = productsService.findByMinPriceOrEqual(price);
             if(products.isEmpty()){
                 throw new ProductNotFoundException("produto não encontrado");
             }
