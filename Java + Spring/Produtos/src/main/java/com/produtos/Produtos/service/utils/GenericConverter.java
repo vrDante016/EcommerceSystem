@@ -1,11 +1,18 @@
 package com.produtos.Produtos.service.utils;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GenericConverter {
 
-    private ModelMapper modelMapper = new ModelMapper();
 
+    private final ModelMapper modelMapper;
+    @Autowired
     public GenericConverter(ModelMapper modelMapper){
         this.modelMapper = modelMapper;
     }

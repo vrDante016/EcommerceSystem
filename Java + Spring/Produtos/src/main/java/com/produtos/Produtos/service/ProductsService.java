@@ -1,8 +1,10 @@
 package com.produtos.Produtos.service;
 
+import com.produtos.Produtos.entities.Category;
 import com.produtos.Produtos.entities.Products;
 import com.produtos.Produtos.exceptions.ProductNotFoundException;
 import com.produtos.Produtos.DTO.ProductsDTO;
+import com.produtos.Produtos.repository.CategoryRespository;
 import com.produtos.Produtos.repository.ProductsRespository;
 import com.produtos.Produtos.service.utils.GenericConverter;
 import com.produtos.Produtos.service.utils.ProductsUtil;
@@ -20,6 +22,8 @@ public class ProductsService {
     @Autowired
     private ProductsRespository productsRespository;
 
+    @Autowired
+    private CategoryRespository categoryRespository;
     @Autowired
     private ProductsUtil productsUtil ;
     @Autowired
@@ -41,17 +45,31 @@ public class ProductsService {
     }
 
     //buscar por id
-    public Optional<ProductsDTO> findById(Long id) {
-
-        return Optional.ofNullable(productsRespository.findById(id).map(products -> genericConverter.convertToDTO(products, ProductsDTO.class)).
-                orElseThrow(() -> new ProductNotFoundException("Produto não encontrado" + id)));
+    public Optional<ProductsDTO> findById(Long id) throws ProductNotFoundException {
+        System.out.println("Buscando produto com ID: " + id);
+        return Optional.ofNullable(productsRespository.findById(id)
+                .map(product -> {
+                    System.out.println("Produto encontrado: " + product);
+                    return genericConverter.convertToDTO(product, ProductsDTO.class);
+                })
+                .orElseThrow(() -> {
+                    System.err.println("Produto não encontrado com ID: " + id);
+                    return new ProductNotFoundException("Produto não encontrado com ID: " + id);
+                }));
     }
     //adicionar novo produto
     public ProductsDTO addProduct(ProductsDTO productsDTO){
-        Products products = genericConverter.convertToEntity(productsDTO, Products.class);
-        productsRespository.save(products);
-        return genericConverter.convertToDTO(products, ProductsDTO.class);
+        Category category = categoryRespository.findById(productsDTO.getCategoryDTO().getId()).
+                orElseGet(() -> {
+                    Category newCategory = genericConverter.convertToEntity(productsDTO.getCategoryDTO(), Category.class);
+                    return categoryRespository.save(newCategory);
+                });
+        Products product = genericConverter.convertToEntity(productsDTO, Products.class);
+        product.setCategory(category);
 
+        productsRespository.save(product);
+
+        return genericConverter.convertToDTO(product, ProductsDTO.class);
     }
 
     //atualizar produtos

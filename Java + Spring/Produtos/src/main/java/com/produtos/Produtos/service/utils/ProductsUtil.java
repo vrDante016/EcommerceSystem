@@ -5,9 +5,11 @@ import com.produtos.Produtos.exceptions.PriceNotValidException;
 import com.produtos.Produtos.exceptions.ProductNotFoundException;
 import com.produtos.Produtos.DTO.ProductsDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class ProductsUtil {
 
 

@@ -19,7 +19,7 @@ public class Products {
     @Column(name = "description", nullable = true, length = 100)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -52,7 +52,7 @@ public class Products {
         return priceProduct;
     }
 
-    public void setPriceName(Double priceName) {
+    public void setPriceProduct(Double priceName) {
         this.priceProduct = priceProduct;
     }
 
@@ -62,6 +62,14 @@ public class Products {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override

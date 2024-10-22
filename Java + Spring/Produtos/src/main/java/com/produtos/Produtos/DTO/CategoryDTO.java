@@ -6,6 +6,7 @@ public class CategoryDTO {
 
     private String name;
 
+    public CategoryDTO(){}
     public CategoryDTO(Long id, String name) {
         this.id = id;
         this.name = name;

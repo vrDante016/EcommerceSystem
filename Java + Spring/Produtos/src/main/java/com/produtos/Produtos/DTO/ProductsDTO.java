@@ -17,16 +17,16 @@ public class ProductsDTO {
 
     private String description;
 
-    private Long categoryId;
+    private CategoryDTO categoryDTO;
 
     public ProductsDTO(){}
 
-    public ProductsDTO(Long id, String productName, Double priceProduct, String description, Long categoryId) {
+    public ProductsDTO(Long id, String productName, Double priceProduct, String description, CategoryDTO categoryDTO) {
         this.id = id;
         this.productName = productName;
         this.priceProduct = priceProduct;
         this.description = description;
-        this.categoryId = categoryId;
+        this.categoryDTO = categoryDTO;
     }
 
     public Long getId() {
@@ -59,6 +59,14 @@ public class ProductsDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public CategoryDTO getCategoryDTO() {
+        return categoryDTO;
+    }
+
+    public void setCategoryDTO(CategoryDTO categoryDTO) {
+        this.categoryDTO = categoryDTO;
     }
 
     @Override

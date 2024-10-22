@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CategoryService {
@@ -22,6 +23,7 @@ public class CategoryService {
     @Autowired
     private ProductsRespository productsRespository;
 
+    @Autowired
     private GenericConverter genericConverter;
 
     public CategoryService(CategoryRespository categoryRespository, GenericConverter genericConverter) {
@@ -34,7 +36,10 @@ public class CategoryService {
                 convertToDTO(category, CategoryDTO.class)).collect(Collectors.toList());
 
     }
-
+    public CategoryDTO findById(Long id){
+        return categoryRespository.findById(id).map(category -> genericConverter.convertToDTO(category, CategoryDTO.class)).
+                orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada"));
+    }
     public CategoryDTO addCategory(CategoryDTO categoryDTO){
         Category category= genericConverter.convertToEntity(categoryDTO, Category.class);
         categoryRespository.save(category);
@@ -50,14 +55,14 @@ public class CategoryService {
         return genericConverter.convertToDTO(category, CategoryDTO.class);
     }
 
-    public void removeCategory(Long id){
+    public void deleteCategory(Long id){
         if(!categoryRespository.existsById(id)){
             throw new CategoryNotFoundException("categoria não encontrado");
         }
         categoryRespository.deleteById(id);
     }
 
-    public List<ProductsDTO> getProductNyCategory(CategoryDTO categoryDTO){
+    public List<ProductsDTO> getProductsInCategory(CategoryDTO categoryDTO){
         if(categoryDTO == null || categoryDTO.getId() == null){
             throw new CategoryNotFoundException("Categoria não encontrada");
         }
